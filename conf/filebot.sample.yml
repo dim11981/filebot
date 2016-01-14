@@ -1,0 +1,31 @@
+---
+settings:
+  :batch_size: number of rows in batch send, e.g. 5000
+  :block_size: number of rows read in queue, e.g. 100000
+  :remove_file: true or false
+  :scan_delay: delay before read file is sec, e.g. 120
+  :send_timeout: how many seconds wait while next line will be read, e.g. 10
+dirs:
+- path: path/to/type/csv
+  fields:
+    type: type1
+    tags: [tag1,tag2]
+  format: csv
+  options:
+    :external_encoding: encoding_name
+    :col_sep: separator
+    :headers: [col1,col2,...etc]
+- path: path/to/type/log
+  fields:
+    type: type2
+    tags: [tag3,tag4]
+  format: log
+  options:
+    :external_encoding: encoding_name
+- path: ...
+hosts:
+- host: ip_addr
+  port: port_num
+  options:
+    :external_encoding: encoding_name
+- host: ...

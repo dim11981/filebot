@@ -1,0 +1,4 @@
+.idea
+/conf/filebot.yml
+/log/*-seekdb.json
+/log/*-filebot.log

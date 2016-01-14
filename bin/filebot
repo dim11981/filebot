@@ -1,0 +1,88 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+
+# early interrupt
+Signal.trap('INT') { puts '[filebot] Interrupt'; exit 1 }
+
+$LOAD_PATH << "#{File.dirname(__FILE__)}/../"
+
+require 'lib/configure'
+require 'lib/logutility'
+require 'lib/worker'
+require 'lib/filebotns'
+
+# initialize Filebot::Configuration
+config_path = "#{File.dirname(__FILE__)}/../conf/#{File.basename($PROGRAM_NAME,'.*')}.yml"
+dirs,hosts,settings = Filebot::Configuration.load_from(config_path)
+
+# initialize Filebot::Log
+log_path = "#{File.dirname(__FILE__)}/../log/#{ENV['COMPUTERNAME']}-#{File.basename($PROGRAM_NAME,'.*')}.log"
+log = Filebot::Log.instance
+log.set_to(log_path)
+
+# initialize Filebot::FileSendServer
+fss = Filebot::FileSendServer.new(settings[:block_size])
+seekdb_path = "#{File.dirname(__FILE__)}/../log/#{ENV['COMPUTERNAME']}-seekdb.json"
+fss.load_seekdb(seekdb_path)
+fss.set_log(log_path)
+
+# terminal
+system('cls')
+system("title -- filebot program v#{Filebot::VERSION} --")
+
+header_line1_arr = ['batch send','read queue','remove file ?','delay read','wait read']
+system('color 0b')
+puts
+print '+'
+header_line1_arr.each { |val| print("#{'='*(val.length+2)}+") }
+puts
+print '|'
+header_line1_arr.each { |val| printf(' %s |',val) }
+puts
+print '|'
+%w(row(s) row(s) yes/no second(s) second(s)).each_with_index { |val,ind| printf(" %#{header_line1_arr[ind].length}s |",val) }
+puts
+print '+'
+header_line1_arr.each { |val| print("#{'-'*(val.length+2)}+") }
+puts
+print '|'
+[settings[:batch_size],settings[:block_size],(settings[:remove_file]?'yes':'no'),settings[:scan_delay],settings[:send_timeout]].each_with_index { |val,ind| printf(" %#{header_line1_arr[ind].length}s |",val) }
+puts
+print '+'
+header_line1_arr.each { |val| print("#{'='*(val.length+2)}+") }
+puts
+
+# run sending
+puts
+hosts.each { |host|
+  fss.run_net_send(settings.merge(host))
+  printf("%-4s: %.62s\n",'HOST',"tcp://#{host['host']}:#{host['port']}")
+  puts '-'*68
+}
+
+# run scanning
+dirs.each { |path|
+  fss.run_file_scan(settings.merge(path))
+  printf("%-4s: %.62s\n",'DIR', "#{path['format']}://#{path['path']}")
+  puts '-'*68
+}
+
+puts '[filebot] Exit on Ctrl+C'
+
+log.write(self, 'info', 'enter')
+# main loop
+begin
+  loop {
+    STDIN.getc
+    sleep 1
+  }
+rescue Interrupt
+  puts '[filebot] Ctrl+C'
+ensure
+  fss.stop
+  log.write(self, 'info', 'exit')
+  log.close
+  puts '[filebot] Exit complete'
+end
+
+# end program
