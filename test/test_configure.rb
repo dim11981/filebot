@@ -1,6 +1,4 @@
-$LOAD_PATH << "#{File.dirname(__FILE__)}/../"
-
-require 'lib/configure'
+require(File.expand_path('../../lib/configure',__FILE__))
 
 config_path = "#{File.dirname(__FILE__)}/../conf/filebot.yml"
 puts Filebot::Configuration.load_from(config_path)

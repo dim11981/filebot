@@ -1,5 +1,3 @@
-$LOAD_PATH << "#{File.dirname(__FILE__)}/../"
-
-require 'lib/filebotns'
+require(File.expand_path('../../lib/version',__FILE__))
 
 puts "-- filebot program v#{Filebot::VERSION} --"

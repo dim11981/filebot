@@ -2,7 +2,7 @@ require 'yaml/store'
 require 'singleton'
 require 'json'
 
-require 'lib/filebotns'
+require 'lib/version'
 
 # Filebot::Configuration module
 # program configuration

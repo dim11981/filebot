@@ -1,6 +1,4 @@
-$LOAD_PATH << "#{File.dirname(__FILE__)}/../"
-
-require 'lib/logutility'
+require(File.expand_path('../../lib/logutility',__FILE__))
 
 log_path = "#{File.dirname(__FILE__)}/../log/#{ENV['COMPUTERNAME']}-filebot.log"
 log = Filebot::Log.instance

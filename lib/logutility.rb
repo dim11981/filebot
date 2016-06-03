@@ -1,7 +1,7 @@
 require 'logger'
 require 'singleton'
 
-require 'lib/filebotns'
+require 'lib/version'
 
 # Filebot::Log class
 # supports log operations

@@ -7,7 +7,7 @@ require 'timeout'
 require 'csv'
 
 require 'lib/logutility'
-require 'lib/filebotns'
+require 'lib/version'
 
 # Filebot::FileSendServer class
 class Filebot::FileSendServer
